@@ -34,6 +34,7 @@ class ReportOil_temp(models.AbstractModel):
             'doc_ids': data.get('ids'),
             'doc_model': data.get('model'),
             'data': data['form'],
+            'type': data['type'],
             'product_dict': data['product_dict'],
             'start_date': data['start_date'],
             'end_date': data['end_date'],

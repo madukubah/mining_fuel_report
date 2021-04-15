@@ -15,6 +15,7 @@
                         </group>
                     </group>
                     <group>
+                        <field name="type"/>
                         <field name="product_id"/>
                     </group>
 

@@ -78,21 +78,22 @@
                                         </td>
                                     </t>
                                 </tr>    
-                                
-                                <tr style="font-weight: bold;background-color: yellow;" >
-                                    <td class="text-center">
-                                    </td>
-                                    <td class="text-center">
-                                    </td>
-                                    <td class="text-center">
-                                        Stock
-                                    </td>
-                                    <t t-foreach="product_dict.keys()" t-as="product">
+                                <t t-if="type == 'posted'" >
+                                    <tr style="font-weight: bold;background-color: yellow;" >
                                         <td class="text-center">
-                                            <span t-esc="'{:,}'.format( product_dict[product]['stock_on_end_date'] )"/>
                                         </td>
-                                    </t>
-                                </tr>            
+                                        <td class="text-center">
+                                        </td>
+                                        <td class="text-center">
+                                            Stock
+                                        </td>
+                                        <t t-foreach="product_dict.keys()" t-as="product">
+                                            <td class="text-center">
+                                                <span t-esc="'{:,}'.format( product_dict[product]['stock_on_end_date'] )"/>
+                                            </td>
+                                        </t>
+                                    </tr>            
+                                </t>
                             </tbody>
                         </table>
 
