@@ -31,7 +31,7 @@ class FuelDieselReport(models.TransientModel):
         vehicle_cost_domain = [ ( "date", ">=", self.start_date ), ( "date", "<=", self.end_date ), ( "product_id", "=", self.product_id.id ) ]
         if self.type == "posted":
             vehicle_cost_domain += [ ( "state", "=", "posted" ) ]
-        vehicle_costs = self.env['fleet.vehicle.log.services'].search( vehicle_cost_domain , order="name asc" )
+        vehicle_costs = self.env['fleet.vehicle.cost'].search( vehicle_cost_domain , order="name asc" )
         for vehicle_cost in vehicle_costs:
             stype = vehicle_cost.cost_subtype_id.name
             vehicle_name = vehicle_cost.vehicle_id.name
