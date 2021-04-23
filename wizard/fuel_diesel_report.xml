@@ -44,6 +44,7 @@
                   name="Diesel Compumtion Report"
                   action="action_fuel_diesel_report_wizard"
                   parent="report_fuel_heading"
+                groups="mining_production.production_group_user,stock.group_stock_user"
                   sequence="99"/>
     </data>
 </odoo>
