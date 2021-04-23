@@ -7,6 +7,7 @@
     'category': 'Mining Management',
     'depends': [
         'mining_production',
+        'stock',
     ],
     'data': [
         "wizard/fuel_diesel_report.xml",
