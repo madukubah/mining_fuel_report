@@ -122,6 +122,7 @@
                         </table>
                         <br/>
                         <t t-set="_no" t-value="1"/>
+                        <t t-set="total_sum" t-value="0"/>
                         <table style="text-align: center; width: 100%; " >
                                 <thead>
                                     <tr>
@@ -146,9 +147,21 @@
                                             </td>
                                             <td class="text-center">
                                                 <span t-esc="'{:,}'.format( data['fuel_consume_by_vehicles'][vehicle]['consume'] )"/>
+                                                <t t-set="total_sum" t-value="total_sum + data['fuel_consume_by_vehicles'][vehicle]['consume']"/>
                                             </td>
                                         </tr>  
                                     </t>
+                                    <tr style="font-weight: bold;background-color: yellow;" >
+                                            <td class="text-center">
+                                            </td>
+                                            <td class="text-center">
+                                            </td>
+                                            <td class="text-center">
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-esc="'{:,}'.format( total_sum )"/>
+                                            </td>
+                                        </tr> 
                                 </tbody>
                         </table>
 
@@ -206,13 +219,13 @@
                         </t> -->
 
                         <t t-foreach="data['tag_log'].keys()" t-as="tag_name">
-                            <!-- <div class="row">
+                            <div class="row">
                                 <center>
                                     <b>
-                                        <h4><span t-esc="tag_name"/></h4>
+                                        <h4><span t-esc="Other"/></h4>
                                     </b>
                                 </center>
-                            </div> -->
+                            </div>
                             <br/><br/>
                             <t t-set="_no" t-value="1"/>
                             <t t-set="count" t-value="0"/>
@@ -223,44 +236,47 @@
                                         <th class="text-center">No</th>
                                         <th class="text-center">Remarks</th>
                                         <th class="text-center">Type</th>
-                                        <th class="text-center">Qty</th>
-                                        <!-- <th class="text-center">Amount</th> -->
+                                        <th class="text-center">Total Consumme</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr t-foreach="data['tag_log'][tag_name]['items']" t-as="line" >
-                                        <td class="text-center">
-                                            <span t-esc="_no"/>
-                                            <t t-set="_no" t-value="_no + 1"/>
-                                        </td>
-                                        <td class="text-center">
-                                            <span t-esc="line['remarks']"/>
-                                        </td>
-                                        <td class="text-center">
-                                            <span t-esc="tag_name"/>
-                                        </td>
-                                        <td class="text-center">
-                                            <span t-esc="'{:,}'.format( line['product_uom_qty'] )"/>
-                                        </td>
-                                        <!-- <td class="text-center">
-                                            <span t-esc="'{:,}'.format( line['amount'] )"/>
-                                        </td> -->
-                                    </tr>   
-                                    <tr style="font-weight: bold;background-color: yellow;" >
-                                        <td class="text-center">
-                                        </td>
-                                        <td class="text-center">
-                                        </td>
-                                        <td class="text-center">
-                                            <span t-esc="'{:,}'.format( data['tag_log'][tag_name]['product_uom_qty'] )"/>
-                                        </td>
-                                        <!-- <td class="text-center">
-                                            <span t-esc="'{:,}'.format(data['tag_log'][tag_name]['total_amount'])"/>
-                                        </td> -->
-                                    </tr>            
+                                    <t t-foreach="data['tag_log'].keys()" t-as="tag_name">
+
+                                        <tr t-foreach="data['tag_log'][tag_name]['items']" t-as="line" >
+                                            <td class="text-center">
+                                                <span t-esc="_no"/>
+                                                <t t-set="_no" t-value="_no + 1"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-esc="line['remarks']"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-esc="tag_name"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-esc="'{:,}'.format( line['product_uom_qty'] )"/>
+                                                <t t-set="total_sum" t-value="total_sum + line['product_uom_qty']"/>
+                                            </td>
+                                            <!-- <td class="text-center">
+                                                <span t-esc="'{:,}'.format( line['amount'] )"/>
+                                            </td> -->
+                                        </tr>   
+                                        <tr style="font-weight: bold;background-color: yellow;" >
+                                            <td class="text-center">
+                                                Total
+                                            </td>
+                                            <td class="text-center">
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-esc="'{:,}'.format( total_sum )"/>
+                                            </td>
+                                            <!-- <td class="text-center">
+                                                <span t-esc="'{:,}'.format(data['tag_log'][tag_name]['total_amount'])"/>
+                                            </td> -->
+                                        </tr>  
+                                    </t>
                                 </tbody>
                             </table>
-                        </t>
 
                         <br/>
                         <!-- <t t-if="type == 'posted'" >
