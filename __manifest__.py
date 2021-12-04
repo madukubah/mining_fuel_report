@@ -8,6 +8,7 @@
     'depends': [
         'mining_production',
         'stock',
+        'vehicle_monitoring'
     ],
     'data': [
         "wizard/fuel_diesel_report.xml",
