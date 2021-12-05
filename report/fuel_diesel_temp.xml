@@ -129,7 +129,7 @@
                                         <th class="text-center">No</th>
                                         <th class="text-center">Vehicle</th>
                                         <th class="text-center">Type</th>
-                                        <th class="text-center">Qty</th>
+                                        <th class="text-center">Consume</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -218,7 +218,6 @@
                             </table>
                         </t> -->
 
-                        <t t-foreach="data['tag_log'].keys()" t-as="tag_name">
                             <div class="row">
                                 <center>
                                     <b>
@@ -257,24 +256,20 @@
                                                 <span t-esc="'{:,}'.format( line['product_uom_qty'] )"/>
                                                 <t t-set="total_sum" t-value="total_sum + line['product_uom_qty']"/>
                                             </td>
-                                            <!-- <td class="text-center">
-                                                <span t-esc="'{:,}'.format( line['amount'] )"/>
-                                            </td> -->
-                                        </tr>   
+                                        </tr>  
+                                    </t>
+                                     
                                         <tr style="font-weight: bold;background-color: yellow;" >
                                             <td class="text-center">
-                                                Total
+                                            </td>
+                                            <td class="text-center">
                                             </td>
                                             <td class="text-center">
                                             </td>
                                             <td class="text-center">
                                                 <span t-esc="'{:,}'.format( total_sum )"/>
                                             </td>
-                                            <!-- <td class="text-center">
-                                                <span t-esc="'{:,}'.format(data['tag_log'][tag_name]['total_amount'])"/>
-                                            </td> -->
                                         </tr>  
-                                    </t>
                                 </tbody>
                             </table>
 

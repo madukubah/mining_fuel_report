@@ -143,7 +143,6 @@ class FuelDieselReport(models.TransientModel):
             for vehicle_cost in vehicle_costs:
                 if vehicle_cost.vehicle_id.name == vehicle.name:
                     stype_vehicle_cost_dict[vehicle.name]["consume"] += vehicle_cost.product_uom_qty
-            _logger.warning(stype_vehicle_cost_dict[vehicle.name]["consume"])
 
         return stype_vehicle_cost_dict
 
