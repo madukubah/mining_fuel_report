@@ -12,10 +12,15 @@ _logger = logging.getLogger(__name__)
 class FuelDieselReport(models.TransientModel):
     _name = 'fuel.diesel.report'
 
+    def _default_vehicle_type(self):
+        VehicleType = self.env['fleet.vehicle.type'].sudo()
+        vehicle_types = VehicleType.search([]) 
+        return vehicle_types.ids
+
     start_date = fields.Date('Start Date', required=True)
     end_date = fields.Date(string="End Date", required=True)
     product_id = fields.Many2one('product.product', 'Fuel', default=4698, readonly=True )
-    vehicle_type_ids = fields.Many2many('fleet.vehicle.type', 'diesel_report_vehicle_type_rel', 'diesel_report_id', 'vehicle_type_id', string='Type' )
+    vehicle_type_ids = fields.Many2many('fleet.vehicle.type', 'diesel_report_vehicle_type_rel', 'diesel_report_id', 'vehicle_type_id', string='Type', default=_default_vehicle_type )
     type = fields.Selection([
         ( "all" , 'All Entries'),
         ( "posted" , 'Posted Entries'),
