@@ -20,7 +20,7 @@ class FuelDieselReport(models.TransientModel):
     start_date = fields.Date('Start Date', required=True)
     end_date = fields.Date(string="End Date", required=True)
     product_id = fields.Many2one('product.product', 'Fuel', default=4698, readonly=True )
-    vehicle_type_ids = fields.Many2many('fleet.vehicle.type', 'diesel_report_vehicle_type_rel', 'diesel_report_id', 'vehicle_type_id', string='Type', default=_default_vehicle_type )
+    vehicle_type_ids = fields.Many2many('fleet.vehicle.type', 'diesel_report_vehicle_type_rel', 'diesel_report_id', 'vehicle_type_id', string='Vehicle Type', default=_default_vehicle_type )
     type = fields.Selection([
         ( "all" , 'All Entries'),
         ( "posted" , 'Posted Entries'),
@@ -70,7 +70,7 @@ class FuelDieselReport(models.TransientModel):
                     "amount" : vehicle_cost.amount,
                 }
 
-        tag_log_domain = [ ( "date", ">=", self.start_date ), ( "date", "<=", self.end_date ), ( "tag_id", "in", tag_ids ), ( "product_id", "=", self.product_id.id ) ]
+        tag_log_domain = [ ( "date", "=", self.end_date ), ( "tag_id", "in", tag_ids ), ( "product_id", "=", self.product_id.id ) ]
         if self.type == "posted":
             tag_log_domain += [ ( "state", "=", "posted" ) ]
         tag_logs = self.env['production.cop.tag.log'].search( tag_log_domain , order="date asc" )
@@ -114,6 +114,10 @@ class FuelDieselReport(models.TransientModel):
         final_dict["total_amount"] = sum( [ y["total_amount"] for x, y in stype_vehicle_cost_dict.items() ] + [ y["total_amount"] for x, y in tag_log_dict.items() ] )
         final_dict["fuel_consume_by_date"] = self.get_fuel_consume_by_date()
         final_dict["fuel_consume_by_vehicles"] = self.get_fuel_consume_by_vehicles()
+        vehicle_type_names = []
+        for vehicle_type in self.vehicle_type_ids:
+            vehicle_type_names += [vehicle_type.name]
+        final_dict["vehicle_types"] = vehicle_type_names
         datas = {
             'ids': self.ids,
             'model': 'fuel.diesel.report',
@@ -126,7 +130,7 @@ class FuelDieselReport(models.TransientModel):
 
     def get_fuel_consume_by_vehicles(self):
         Vehicle = self.env['fleet.vehicle'].sudo()
-        vehicles = Vehicle.search( [ ( "type_id", "in", self.vehicle_type_ids.ids ) ] )
+        vehicles = Vehicle.search( [ ( "type_id", "in", self.vehicle_type_ids.ids ) ], order="type_id asc" )
         
         tag_ids = self.env['production.cop.tag'].search( [] )
         tag_ids = tag_ids.ids
@@ -136,20 +140,41 @@ class FuelDieselReport(models.TransientModel):
         tag_ids = [ x for x in tag_ids if x not in stag_ids ]
 
         stype_vehicle_cost_dict = {}
-        vehicle_cost_domain = [ ( "date", ">=", self.start_date ), ( "date", "<=", self.end_date ), ( "product_id", "=", self.product_id.id ) ]
+        vehicle_cost_domain = [ ( "date", "=", self.end_date ), ( "product_id", "=", self.product_id.id ) ]
         if self.type == "posted":
             vehicle_cost_domain += [ ( "state", "=", "posted" ) ]
         vehicle_costs = self.env['fleet.vehicle.cost'].search( vehicle_cost_domain , order="name asc" )
         for vehicle in vehicles:
             stype_vehicle_cost_dict[vehicle.name] = {
+                "name": vehicle.name,
                 "type": vehicle.type_id.name,
                 "consume": 0
             }
             for vehicle_cost in vehicle_costs:
                 if vehicle_cost.vehicle_id.name == vehicle.name:
                     stype_vehicle_cost_dict[vehicle.name]["consume"] += vehicle_cost.product_uom_qty
+                
+            if stype_vehicle_cost_dict[vehicle.name]["consume"] == 0 :
+                del stype_vehicle_cost_dict[vehicle.name]
 
-        return stype_vehicle_cost_dict
+        vehicle_types = []
+        type_vehicle_cost_dict = {}
+        for key, value in stype_vehicle_cost_dict.items():
+            if type_vehicle_cost_dict.get( value["type"], False ):
+                type_vehicle_cost_dict[value["type"]]["items"] +=[value]
+            else:
+                vehicle_types += [ value["type"] ]
+                type_vehicle_cost_dict[value["type"]] = {
+                    "items": [
+                        value
+                    ]
+                }
+
+        return {
+            "types": vehicle_types,
+            "vehicles": type_vehicle_cost_dict
+        }
+        # return stype_vehicle_cost_dict
 
     def get_fuel_consume_by_date(self):
         start = datetime.datetime.strptime( self.start_date, '%Y-%m-%d')
@@ -213,9 +238,7 @@ class FuelDieselReport(models.TransientModel):
 
         stock_on_start_date = self.product_id.with_context({'to_date': self.start_date }).qty_available
         stock_on_end_date = self.product_id.with_context({'to_date': self.end_date }).qty_available
-        _logger.warning(stock_on_start_date)
-        _logger.warning(stock_on_end_date)
-        _logger.warning(stock_on_end_date - stock_on_start_date)
+        
         for date in fuel_date_dict["dates"]:
             fuel_date_dict[date]["begining_balance"] = stock_on_start_date
             fuel_date_dict[date]["balance"] = fuel_date_dict[date]["begining_balance"] + fuel_date_dict[date]["in"] - fuel_date_dict[date]["out"]

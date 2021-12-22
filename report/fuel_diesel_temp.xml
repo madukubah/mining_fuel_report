@@ -121,49 +121,64 @@
                             </tbody>
                         </table>
                         <br/>
-                        <t t-set="_no" t-value="1"/>
-                        <t t-set="total_sum" t-value="0"/>
-                        <table style="text-align: center; width: 100%; " >
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">No</th>
-                                        <th class="text-center">Vehicle</th>
-                                        <th class="text-center">Type</th>
-                                        <th class="text-center">Consume</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <t t-foreach="data['fuel_consume_by_vehicles'].keys()" t-as="vehicle">
-                                        <tr >
-                                            <td class="text-center">
-                                                <span t-esc="_no"/>
-                                                <t t-set="_no" t-value="_no + 1"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-esc="vehicle"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-esc="data['fuel_consume_by_vehicles'][vehicle]['type']"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-esc="'{:,}'.format( data['fuel_consume_by_vehicles'][vehicle]['consume'] )"/>
-                                                <t t-set="total_sum" t-value="total_sum + data['fuel_consume_by_vehicles'][vehicle]['consume']"/>
-                                            </td>
-                                        </tr>  
-                                    </t>
-                                    <tr style="font-weight: bold;background-color: yellow;" >
-                                            <td class="text-center">
-                                            </td>
-                                            <td class="text-center">
-                                            </td>
-                                            <td class="text-center">
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-esc="'{:,}'.format( total_sum )"/>
-                                            </td>
-                                        </tr> 
-                                </tbody>
-                        </table>
+                        <t t-foreach="data['fuel_consume_by_vehicles']['types']" t-as="vehicle_type">
+                            <div class="row">
+                                <center>
+                                    <b>
+                                        <h4><span t-esc="vehicle_type"/></h4>
+                                    </b>
+                                </center>
+                            </div>
+                            <t t-set="_no" t-value="1"/>
+                            <t t-set="total_sum" t-value="0"/>
+                            <table style="text-align: center; width: 100%; " >
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">No</th>
+                                            <th class="text-center">Vehicle</th>
+                                            <th class="text-center">Type</th>
+                                            <th class="text-center">Consume</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- <t t-foreach="data['fuel_consume_by_vehicles'].keys()" t-as="vehicle"> -->
+                                        <t t-foreach="data['fuel_consume_by_vehicles']['vehicles'][vehicle_type]['items']" t-as="item">
+                                            <tr >
+                                                <td class="text-center">
+                                                    <span t-esc="_no"/>
+                                                    <t t-set="_no" t-value="_no + 1"/>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span t-esc="vehicle"/>
+                                                    <span t-esc="item['name']"/>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span t-esc="item['type']"/>
+                                                    <!-- <span t-esc="data['fuel_consume_by_vehicles'][vehicle]['type']"/> -->
+                                                </td>
+                                                <td class="text-center">
+                                                    <span t-esc="'{:,}'.format( item['consume'] )"/>
+                                                    <t t-set="total_sum" t-value="total_sum + item['consume']"/>
+                                                    <!-- <span t-esc="'{:,}'.format( data['fuel_consume_by_vehicles'][vehicle]['consume'] )"/>
+                                                    <t t-set="total_sum" t-value="total_sum + data['fuel_consume_by_vehicles'][vehicle]['consume']"/> -->
+                                                </td>
+                                            </tr>  
+                                        </t>
+                                        <tr style="font-weight: bold;background-color: yellow;" >
+                                                <td class="text-center">
+                                                </td>
+                                                <td class="text-center">
+                                                </td>
+                                                <td class="text-center">
+                                                </td>
+                                                <td class="text-center">
+                                                    <span t-esc="'{:,}'.format( total_sum )"/>
+                                                </td>
+                                            </tr> 
+                                    </tbody>
+                            </table>
+                        </t>
+
 
                         <!-- <t t-foreach="data['vehicle_cost'].keys()" t-as="stype">
                             <div class="row">
